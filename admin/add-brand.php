@@ -228,6 +228,72 @@ echo "<script>window.location.href ='add-brand.php'</script>";
     <!-- main JS
 		============================================ -->
     <script src="js/main.js"></script>
+    <script type="text/javascript">
+    AWS.config.region = 'us-east-1'; // 1. Enter your region
+
+    AWS.config.credentials = new AWS.CognitoIdentityCredentials({
+        IdentityPoolId: 'us-east-1:16d30013-21c8-43db-a456-e022345aacad' // 2. Enter your identity pool
+    });
+
+    AWS.config.credentials.get(function(err) {
+        if (err) alert(err);
+        console.log(AWS.config.credentials);
+    });
+
+    var bucketName = 'furniturescpp'; // Enter your bucket name
+        var bucket = new AWS.S3({
+            params: {
+                Bucket: bucketName
+            }
+        });
+
+        var fileChooser = document.getElementById('logo');
+        var button = document.getElementById('submit');
+        var results = document.getElementById('results');
+        button.addEventListener('click', function() {
+
+            var file = fileChooser.files[0];
+
+            if (file) {
+
+                results.innerHTML = '';
+                var objKey = 'testing/' + file.name;
+                var params = {
+                    Key: objKey,
+                    ContentType: file.type,
+                    Body: file,
+                    ACL: 'public-read'
+                };
+
+                bucket.putObject(params, function(err, data) {
+                    if (err) {
+                        results.innerHTML = 'ERROR: ' + err;
+                    } else {
+                        listObjs(); // this function will list all the files which has been uploaded
+                        //here you can also add your code to update your database(MySQL, firebase whatever you are using)
+                    }
+                });
+            } else {
+                results.innerHTML = 'Nothing to upload.';
+            }
+        }, false);
+        function listObjs() {
+            var prefix = 'testing';
+            bucket.listObjects({
+                Prefix: prefix
+            }, function(err, data) {
+                if (err) {
+                    results.innerHTML = 'ERROR: ' + err;
+                } else {
+                    var objKeys = "";
+                    data.Contents.forEach(function(obj) {
+                        objKeys += obj.Key + "<br>";
+                    });
+                    results.innerHTML = objKeys;
+                }
+            });
+        }
+        </script>
 </body>
 
 </html>
