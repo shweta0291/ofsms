@@ -77,7 +77,7 @@ foreach($results as $row)
 <div class="header_top">
    <div class="container">
      <div class="logo">
-      <a href="index.php"><strong style="color: red;font-size: 20px;">FURNITURE Shop</strong></a>       
+      <a href="index.php"><strong style="color: red;font-size: 20px;">FURNITURE Store</strong></a>       
      </div>
      <div class="header_right"> 
       <?php if (strlen($_SESSION['ofsmsuid']==0)) {?>
